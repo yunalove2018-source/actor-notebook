@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<script src="config.js"></script>
+<link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/icon.svg"><meta name="theme-color" content="#8c2f3c">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>배우 노트</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);--bg:#eceef2;--sf:#fff;--ink:#1c2030;--mute:#6b7184;--ln:#d6d9e1;--ac:#8c2f3c;--acs:#f3dde0;--wood:#7a5a3c;--wood2:#5d432b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12141b;--sf:#1c202b;--ink:#e8eaf0;--mute:#98a0b5;--ln:#2d3342;--ac:#e07a88;--acs:#3a2429;--wood:#6b4e34;--wood2:#4a3522}}
+:root[data-theme="dark"]{--bg:#12141b;--sf:#1c202b;--ink:#e8eaf0;--mute:#98a0b5;--ln:#2d3342;--ac:#e07a88;--acs:#3a2429;--wood:#6b4e34;--wood2:#4a3522}
+*,*:before,*:after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Noto Serif KR","Nanum Myeongjo",Georgia,serif;padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+button,input,textarea{font:inherit;color:inherit}
+main{max-width:640px;margin:0 auto;padding:16px 16px 0}
+h1{font-size:26px;margin:8px 0 2px;letter-spacing:-.01em}
+h2{font-size:18px;margin:22px 0 8px}
+.sub{color:var(--mute);font-size:14px;margin:0 0 14px}
+.shelf{display:flex;align-items:flex-end;gap:6px;padding:0 10px;border-bottom:12px solid var(--wood);box-shadow:0 6px 0 var(--wood2);margin:6px 0 30px;min-height:150px;flex-wrap:wrap;row-gap:0}
+.spine{border:0;border-radius:3px 3px 0 0;color:#fff;width:36px;padding:10px 0;writing-mode:vertical-rl;font-size:14px;cursor:pointer;box-shadow:inset -4px 0 0 rgba(0,0,0,.18),inset 2px 0 0 rgba(255,255,255,.15);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.spine.big{width:54px;height:140px}
+.spine.new{background:transparent;color:var(--mute);border:2px dashed var(--ln);height:110px}
+.spine small{opacity:.8}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:10px;padding:14px;margin:0 0 14px}
+label{display:block;margin:0 0 12px}
+label>span,.lb{display:block;font-size:13px;color:var(--mute);margin-bottom:4px}
+input,textarea{width:100%;background:var(--bg);border:1px solid var(--ln);border-radius:8px;padding:10px 12px;resize:vertical}
+input:focus,textarea:focus,button:focus-visible{outline:2px solid var(--ac);outline-offset:1px}
+.item{border-left:3px solid var(--ln);padding-left:10px;margin:0 0 14px}
+.ih{display:flex;gap:8px;margin-bottom:6px}
+.ih .t{font-weight:700}
+.x{background:none;border:0;color:var(--mute);font-size:13px;white-space:nowrap;cursor:pointer;padding:4px 8px}
+.add{background:none;border:1px dashed var(--ln);border-radius:8px;padding:9px 12px;color:var(--ac);cursor:pointer;width:100%;margin-top:2px}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:10px 16px;cursor:pointer}
+.back{background:none;border:0;color:var(--mute);padding:4px 0;cursor:pointer}
+.tabs{display:flex;gap:6px;margin:10px 0 16px}
+.tabs button{flex:1;padding:9px;border-radius:8px;border:1px solid var(--ln);background:var(--sf);cursor:pointer}
+.tabs button.on,.seg button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.seg{display:flex;gap:6px}
+.seg button{flex:1;padding:9px;border-radius:8px;border:1px solid var(--ln);background:var(--bg);cursor:pointer}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal .wd{font-size:12px;color:var(--mute)}
+.cal button{aspect-ratio:1;border:1px solid transparent;border-radius:8px;background:var(--sf);cursor:pointer;position:relative;font-size:14px}
+.cal button.dot:after{content:"";position:absolute;left:50%;bottom:5px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:var(--ac)}
+.cal button.sel{background:var(--ac);color:#fff}.cal button.sel.dot:after{background:#fff}
+.cal button.td{border-color:var(--ac)}
+.cal i{visibility:hidden}
+.mh{display:flex;align-items:center;justify-content:space-between;margin:6px 0 10px}
+.mh button{background:var(--sf);border:1px solid var(--ln);border-radius:8px;padding:6px 14px;cursor:pointer}
+.empty{color:var(--mute);text-align:center;padding:18px 0;font-size:14px}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--sf);border-top:1px solid var(--ln);display:flex;justify-content:center;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));z-index:5}
+nav button{flex:1;max-width:150px;background:none;border:0;color:var(--mute);padding:6px 0;cursor:pointer;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button b{font-size:22px;font-weight:400;line-height:1}
+nav button.on{color:var(--ac)}
+nav button.book b{background:var(--ac);color:#fff;border-radius:10px;width:44px;height:30px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.tot{font-size:13px;color:var(--mute);margin:8px 0 14px;text-align:center}
+.swr{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.sw{width:36px;height:36px;border-radius:50%;border:2px solid var(--ln);cursor:pointer;padding:0}
+.sw.on{outline:3px solid var(--ink);outline-offset:2px}
+.cp{width:44px;height:36px;padding:0;border:1px solid var(--ln);border-radius:8px;background:none}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<nav>
+  <button data-go="home"><b>⌂</b>홈</button>
+  <button data-go="cal"><b>📅</b>달력</button>
+  <button data-go="set"><b>⚙</b>설정</button>
+</nav>
+<script>
+const KEY='actor-notebook-v1';
+let S=null;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+S=S||{works:[],obs:[],act:[]};S.set=S.set||{};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const ymd=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const TD=ymd(new Date());
+let V={tab:'home',w:null,wt:'main',jt:'obs',d:TD,m:new Date()};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const gp=p=>p.split('.').reduce((o,k)=>o[k],S);
+const sp=(p,v)=>{const a=p.split('.'),l=a.pop();a.reduce((o,k)=>o[k],S)[l]=v};
+const inp=(p,ph,t)=>`<input ${t?'type="'+t+'" inputmode="numeric" min="0"':''} data-p="${p}" value="${esc(gp(p))}" placeholder="${ph||''}">`;
+const ta=(p,ph,r)=>`<textarea rows="${r||3}" data-p="${p}" placeholder="${ph||''}">${esc(gp(p))}</textarea>`;
+const L=(t,h)=>`<label><span>${t}</span>${h}</label>`;
+const items=(p,addLabel,dt)=>(gp(p)||[]).map((it,i)=>`<div class="item"><div class="ih"><input class="t" data-p="${p}.${i}.t" value="${esc(it.t)}" placeholder="항목 이름"><button class="x" data-del="${p}.${i}">삭제</button></div><textarea rows="3" data-p="${p}.${i}.v">${esc(it.v)}</textarea></div>`).join('')+`<button class="add" data-add="${p}" ${dt?`data-t="${dt}"`:''}>+ ${addLabel||'항목 추가'}</button>`;
+const seg=(p,opts)=>`<div class="seg">${opts.map(o=>`<button data-set="${p}" data-val="${o}" class="${gp(p)===o?'on':''}">${o}</button>`).join('')}</div>`;
+const COL=['#8c2f3c','#2f4b6e','#4a6b4f','#6b4a7a','#a2672f','#37595e','#7a3b52'];
+
+function home(){
+  const sp_=S.works.map((w,i)=>`<button class="spine" data-open="${i}" style="background:${COL[i%7]};height:${100+(i*23%50)}px">${esc(w.title||'제목 없음')}</button>`).join('');
+  return `<h1>내 책장</h1><p class="sub">작품과 기록을 책처럼 모아 둡니다.</p>
+  <div class="shelf"><button class="spine big" data-go="obs" style="background:#37595e">관찰일지 <small>${S.obs.length}</small></button><button class="spine big" data-go="act" style="background:#6b4a7a">배우일지 <small>${S.act.length}</small></button></div>
+  <div class="shelf">${sp_}<button class="spine new" data-newwork>+ 새 작품</button></div>`;
+}
+
+function work(){
+  if(V.w==null){
+    return `<h1>작품분석</h1><p class="sub">책을 눌러 작품을 분석해 보세요.</p><div class="shelf">${S.works.map((w,i)=>`<button class="spine" data-open="${i}" style="background:${COL[i%7]};height:${100+(i*23%50)}px">${esc(w.title||'제목 없음')}</button>`).join('')}<button class="spine new" data-newwork>+ 새 작품</button></div><div class="shelf"></div>`;
+  }
+  const w=S.works[V.w],p='works.'+V.w;let b='';
+  if(V.wt=='main') b=`<div class="card">${L('작품의 첫인상 · 초기 생각',ta(p+'.first','읽고 난 직후의 느낌, 떠오른 생각',5))}</div>
+    <h2>분석 항목</h2><div class="card">${items(p+'.items','분석 항목 추가')}</div>
+    <h2>막별 분석</h2><div class="card">${items(p+'.acts','막 추가',(w.acts.length+1)+'막')}</div>`;
+  else if(V.wt=='script') b=`<h2>대본 분석</h2><p class="sub">장면별 대사가 아니라 대본 전체의 구조와 흐름을 정리합니다.</p><div class="card">${items(p+'.script','대본 분석 항목 추가')}</div>`;
+  else b=`<h2>인물 분석</h2>`+w.chars.map((c,i)=>`<div class="card"><div class="ih">${inp(p+'.chars.'+i+'.name','인물 이름')}<button class="x" data-del="${p}.chars.${i}">삭제</button></div>${items(p+'.chars.'+i+'.items','인물 항목 추가')}</div>`).join('')+`<button class="add" data-addc="${p}.chars">+ 인물 추가</button>`;
+  return `<button class="back" data-back>← 작품 목록</button>${inp(p+'.title','작품 제목')}
+  <div class="tabs">${[['main','작품'],['script','대본'],['chars','인물']].map(t=>`<button data-wt="${t[0]}" class="${V.wt==t[0]?'on':''}">${t[1]}</button>`).join('')}</div>${b}
+  <button class="x" data-delwork style="margin-top:20px">이 작품 삭제</button>`;
+}
+
+function cal(key){
+  const y=V.m.getFullYear(),m=V.m.getMonth(),f=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).getDate();
+  const has=new Set([...S.obs,...S.act].map(e=>e.d));
+  let c=['일','월','화','수','목','금','토'].map(x=>`<div class="wd">${x}</div>`).join('')+'<i></i>'.repeat(f);
+  for(let d=1;d<=n;d++){const s=y+'-'+String(m+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    c+=`<button data-d="${s}" class="${has.has(s)?'dot ':''}${s==V.d?'sel ':''}${s==TD?'td':''}">${d}</button>`}
+  return `<div class="mh"><button data-nav="-1">‹</button><b>${y}년 ${m+1}월</b><button data-nav="1">›</button></div><div class="cal">${c}</div>`;
+}
+
+function obsForm(i){const p='obs.'+i;return `<div class="card"><div class="ih" style="justify-content:flex-end"><button class="x" data-del="${p}">기록 삭제</button></div>
+ ${L('관찰 대상',inp(p+'.who','예: 지하철에서 본 할머니'))}
+ ${L('목소리 톤',ta(p+'.voice','높낮이, 속도, 떨림 등',2))}
+ ${L('제스처',ta(p+'.gest','몸짓과 행동',2))}
+ <div class="lb">텐션</div>${seg(p+'.tension',['상','중','하'])}<div style="height:8px"></div>${L('텐션 이유',ta(p+'.tr','왜 그렇게 느꼈는지',2))}
+ ${L('어울리는 희곡 속 역할',inp(p+'.role','작품 · 역할'))}${L('이 역할이 어울리는 이유',ta(p+'.rr','',2))}
+ ${L('자유 기록',ta(p+'.memo','빈 노트처럼 자유롭게',4))}${items(p+'.extra')}</div>`}
+
+function actForm(i){const p='act.'+i;return `<div class="card"><div class="ih" style="justify-content:flex-end"><button class="x" data-del="${p}">기록 삭제</button></div>
+ ${L('목표 · 오늘의 연습 목표',ta(p+'.goal','',2))}
+ <div class="lb">수행</div><div class="row2">${L('수행 시간',inp(p+'.when','예: 19:00~21:00'))}${L('장소',inp(p+'.where',''))}</div>${L('연습 방식',inp(p+'.how','예: 독백 반복, 호흡 훈련'))}
+ <div class="lb">피드백</div><div class="row2">${L('고칠 것 1',inp(p+'.fix1',''))}${L('고칠 것 2',inp(p+'.fix2',''))}</div>
+ ${L('총평',ta(p+'.review','자연스럽게 적어 보세요',4))}
+ <div class="row2">${L('연기 연습 (분)',inp(p+'.prac','0','number'))}${L('연기 공부 (분)',inp(p+'.study','0','number'))}</div>
+ ${L('자유 기록',ta(p+'.memo','',3))}${items(p+'.extra')}</div>`}
+
+function journal(key){
+  const idx=S[key].map((e,i)=>e.d==V.d?i:-1).filter(i=>i>=0);
+  const mk=V.m.getFullYear()+'-'+String(V.m.getMonth()+1).padStart(2,'0');
+  let tot='';
+  if(key=='act'){const s=S.act.filter(e=>e.d.startsWith(mk)).reduce((a,e)=>a+(+e.prac||0)+(+e.study||0),0);tot=`<div class="tot">이번 달 연습·공부 ${Math.floor(s/60)}시간 ${s%60}분</div>`}
+  return `<h1>달력</h1><div class="tabs">${[['obs','인물 관찰일지'],['act','배우일지']].map(t=>`<button data-jt="${t[0]}" class="${key==t[0]?'on':''}">${t[1]}</button>`).join('')}</div>
+  ${cal(key)}${tot}<h2>${V.d.replace(/-/g,'.')}</h2>
+  ${idx.length?idx.map(i=>key=='obs'?obsForm(i):actForm(i)).join(''):'<div class="empty">이 날짜의 기록이 없어요.</div>'}
+  <button class="btn" data-newj="${key}" style="width:100%">+ 이 날짜에 기록 추가</button>`;
+}
+
+function render(){
+  const t=V.tab;
+  if(GM){$('#app').innerHTML=guest();document.querySelector('nav').style.display='none';return}
+  $('#app').innerHTML=t=='home'||t=='work'?work():t=='cal'?journal(V.jt):settings();
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.go==(t=='work'?'home':t)));
+  if(t=='set')loadShare();
+}
+function go(t){V.tab=t;if(t=='home')V.w=null;V.m=new Date(V.d+'T00:00:00');render();scrollTo(0,0)}
+
+document.addEventListener('input',e=>{const p=e.target.dataset.p;if(p){sp(p,e.target.value);save()}});
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-go],[data-open],[data-newwork],[data-back],[data-wt],[data-add],[data-addc],[data-del],[data-delwork],[data-set],[data-d],[data-nav],[data-newj],[data-jt],[data-cfg],[data-sh]');
+  if(!b)return;const D=b.dataset;
+  if(D.go){go(D.go);return}
+  if(D.open!=null){V.tab='work';V.w=+D.open;V.wt='main';render();scrollTo(0,0);return}
+  if('newwork' in D){S.works.push({title:'',first:'',items:[{t:'줄거리',v:''},{t:'주제와 메시지',v:''}],acts:[{t:'1막',v:''}],script:[],chars:[]});V.tab='work';V.w=S.works.length-1;V.wt='main';save();render();scrollTo(0,0);return}
+  if('back' in D){V.w=null;render();return}
+  if(D.wt){V.wt=D.wt;render();return}
+  if(D.add){gp(D.add).push({t:D.t||'',v:''});save();render();return}
+  if(D.addc){gp(D.addc).push({name:'',items:[{t:'',v:''}]});save();render();return}
+  if(D.del){const a=D.del.split('.'),i=+a.pop();gp(a.join('.')).splice(i,1);save();render();return}
+  if('delwork' in D){S.works.splice(V.w,1);V.w=null;save();render();return}
+  if(D.set){const cur=gp(D.set);sp(D.set,cur===D.val?'':D.val);save();render();return}
+  if(D.sh){shareAct(D.sh,D.id);return}
+  if(D.jt){V.jt=D.jt;render();return}
+  if(D.cfg){if(D.cfg=='reset')S.set={};else S.set[D.cfg]=D.val;save();applyTheme();render();return}
+  if(D.d){V.d=D.d;render();return}
+  if(D.nav){V.m=new Date(V.m.getFullYear(),V.m.getMonth()+ +D.nav,1);render();return}
+  if(D.newj){S[D.newj].push(D.newj=='obs'?{d:V.d,who:'',voice:'',gest:'',tension:'',role:'',memo:'',extra:[]}:{d:V.d,goal:'',when:'',where:'',how:'',fix1:'',fix2:'',review:'',prac:'',study:'',memo:'',extra:[]});save();render()}
+});
+function settings(){const t=S.set,
+sw=(k,a)=>a.map(c=>`<button class="sw ${t[k]==c?'on':''}" data-cfg="${k}" data-val="${c}" style="background:${c}" aria-label="${c}"></button>`).join('')+`<input type="color" class="cp" data-cfgc="${k}" value="${t[k]||(k=='bg'?'#eceef2':'#8c2f3c')}" aria-label="직접 고르기">`,
+op=(k,a)=>`<div class="seg">${a.map(o=>`<button data-cfg="${k}" data-val="${o[0]}" class="${(t[k]||a[0][0])==o[0]?'on':''}">${o[1]}</button>`).join('')}</div>`;
+return `<h1>설정</h1><p class="sub">화면 분위기를 취향대로 바꿔요.</p>
+<div class="card"><div class="lb">화면 모드</div>${op('mode',[['auto','자동'],['light','밝게'],['dark','어둡게']])}</div>
+<div class="card"><div class="lb">배경색</div><div class="swr">${sw('bg',['#eceef2','#f7f3ea','#e6efe8','#e9e4f0','#1f2430','#12141b','#2a1f24'])}</div></div>
+<div class="card"><div class="lb">포인트 색</div><div class="swr">${sw('ac',['#8c2f3c','#2f4b6e','#4a6b4f','#6b4a7a','#a2672f','#37595e','#d9577a'])}</div></div>
+<div class="card"><div class="lb">글꼴</div>${op('font',[['serif','명조'],['sans','고딕']])}</div>
+<div id="shareBox"></div><button class="x" data-cfg="reset">기본값으로 되돌리기</button>`}
+function applyTheme(){const t=S.set,r=document.documentElement,s=r.style;
+['--bg','--sf','--ink','--mute','--ln','--ac'].forEach(k=>s.removeProperty(k));
+if(t.mode&&t.mode!='auto')r.dataset.theme=t.mode;else delete r.dataset.theme;
+if(t.bg){const n=parseInt(t.bg.slice(1),16),l=(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255,d=l<.5,ink=d?'#eceef4':'#1c2030';
+s.setProperty('--bg',t.bg);s.setProperty('--ink',ink);s.setProperty('--sf',`color-mix(in srgb,${t.bg} ${d?88:55}%,#fff)`);
+s.setProperty('--ln',`color-mix(in srgb,${ink} 18%,${t.bg})`);s.setProperty('--mute',`color-mix(in srgb,${ink} 60%,${t.bg})`)}
+if(t.ac)s.setProperty('--ac',t.ac);
+document.body.style.fontFamily=t.font=='sans'?'"Noto Sans KR","Apple SD Gothic Neo",system-ui,sans-serif':''}
+document.addEventListener('input',e=>{const c=e.target.dataset.cfgc;if(c){S.set[c]=e.target.value;save();applyTheme()}});
+let GM=false,G={snap:null,msg:''},ME={owner:true,id:null},DB=null,LM='';
+const hx=async s=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s.trim())))].map(b=>b.toString(16).padStart(2,'0')).join('').slice(0,32);
+const R=(t,v)=>v?`<p><b>${esc(t)}</b><br>${esc(v).replace(/\n/g,'<br>')}</p>`:'';
+const RI=a=>(a||[]).map(i=>R(i.t,i.v)).join('');
+const J=(a,s)=>a.filter(Boolean).join(s);
+function roView(n){return `<h1>공유된 노트</h1><p class="sub">읽기 전용이에요.</p><h2>작품분석</h2>`+n.works.map(w=>`<div class="card"><h3>${esc(w.title)}</h3>${R('첫인상',w.first)}${RI(w.items)}${RI(w.acts)}${RI(w.script)}${(w.chars||[]).map(c=>`<h4>${esc(c.name)}</h4>${RI(c.items)}`).join('')}</div>`).join('')+`<h2>인물 관찰일지</h2>`+n.obs.map(e=>`<div class="card"><b>${e.d} ${esc(e.who)}</b>${R('목소리 톤',e.voice)}${R('제스처',e.gest)}${R('텐션',J([e.tension,e.tr],' — '))}${R('어울리는 역할',J([e.role,e.rr],' — '))}${R('자유 기록',e.memo)}${RI(e.extra)}</div>`).join('')+`<h2>배우일지</h2>`+n.act.map(e=>`<div class="card"><b>${e.d}</b>${R('목표',e.goal)}${R('수행',J([e.when,e.where,e.how],' / '))}${R('피드백',J([e.fix1,e.fix2],'\n'))}${R('총평',e.review)}${R('연습 · 공부(분)',(e.prac||0)+' / '+(e.study||0))}${R('자유 기록',e.memo)}${RI(e.extra)}</div>`).join('')}
+function guest(){if(G.snap)return roView(G.snap)+fbBox();return `<h1>초대받은 분 입장</h1><p class="sub">받은 1회용 코드를 입력하세요. 한 번 입장하면 그 코드는 다시 쓸 수 없어요.</p><div class="card"><input id="gc" placeholder="코드"><button class="btn" data-sh="enter" style="width:100%;margin-top:10px">입장하기</button><p class="sub">${esc(G.msg)}</p></div><button class="add" data-sh="me" style="margin-top:6px">코드 없이 내 노트 쓰기</button>`}
+const API=(p,b,t)=>fetch((window.API_BASE||'')+'/api/'+p,{method:'POST',headers:Object.assign({'Content-Type':'application/json'},t?{Authorization:'Bearer '+t}:{}),body:JSON.stringify(b||{})}).then(async r=>{const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'오류');return j});
+let OT=null;try{OT=localStorage.getItem('owner-token')}catch(e){}
+async function loadShare(){const b=$('#shareBox');if(!b)return;
+if(!OT){b.innerHTML=`<div class="card"><div class="lb">손님에게 보여주기</div><p class="sub">주인 비밀번호로 로그인하면 공유 기능을 쓸 수 있어요.</p><input id="op" type="password" placeholder="주인 비밀번호"><button class="btn" data-sh="login" style="width:100%;margin-top:10px">로그인</button><p class="sub">${esc(LM)}</p></div>`;return}
+let rows='',fbs='';try{const r=await API('invites',{},OT);rows=r.invites.map(x=>`<div class="ih"><span style="flex:1">${esc(x.label)} · ${x.used?'사용됨':'대기 중'}</span><button class="x" data-sh="rm" data-id="${x.id}">삭제</button></div>`).join('');const f=await API('fb-all',{},OT);fbs=f.items.map(x=>`<div class="item"><b>${esc(x.label)}</b> <span class="sub">${new Date(x.at).toLocaleString('ko-KR')}</span><p>${esc(x.text).replace(/\n/g,'<br>')}</p><button class="x" data-sh="fbrm" data-id="${x.id}">삭제</button></div>`).join('')}catch(e){OT=null;try{localStorage.removeItem('owner-token')}catch(_){}LM='다시 로그인해 주세요.';return loadShare()}
+b.innerHTML=`<div class="card"><div class="lb">손님에게 보여주기</div><p class="sub">1) 지금 기록을 공유본으로 올리고 2) 1회용 코드를 만들어 알려주세요. 손님은 ${esc(location.origin)}/?guest=1 로 들어와 코드를 입력해요. 코드는 한 번 입장하면 사라져요.</p><button class="btn" data-sh="snap" style="width:100%">현재 기록을 공유본으로 올리기</button><div style="height:14px"></div>${L('손님 이름','<input id="invL" placeholder="예: 연기 선생님">')}${L('1회용 코드 (직접 정하기)','<input id="invC" placeholder="6자 이상">')}<button class="add" data-sh="inv">+ 1회용 코드 만들기</button><div style="height:10px"></div>${rows||'<div class="empty">만든 코드가 없어요.</div>'}<h2>받은 피드백</h2>${fbs||'<div class="empty">아직 없어요.</div>'}<p class="sub">${esc(LM)}</p></div>`}
+async function shareAct(a,id){if(['enter','fbadd','fbsave','fbdel','gout','me'].includes(a))return guestAct(a,id);LM='';try{
+if(a=='login'){const r=await API('login',{password:$('#op').value});OT=r.token;try{localStorage.setItem('owner-token',OT)}catch(e){}}
+if(a=='snap'){await API('snapshot',{data:{works:S.works,obs:S.obs,act:S.act}},OT);LM='공유본을 올렸어요.'}
+if(a=='inv'){await API('invite',{label:$('#invL').value.trim()||'손님',code:$('#invC').value},OT);LM='코드를 만들었어요.'}
+if(a=='rm')await API('invite-delete',{id},OT);
+if(a=='fbrm')await API('fb-del',{id},OT);
+if(a=='enter'){const c=$('#gc').value.trim();if(!c)return;try{const r=await API('redeem',{code:c});G.snap=r.snapshot;G.msg='';try{sessionStorage.setItem('gsnap',JSON.stringify(G.snap))}catch(e){}}catch(e){G.msg=e.message}render();return}
+}catch(e){LM=e.message}
+loadShare()}
+const fbBox=()=>`<h2>피드백</h2><div class="card"><p class="sub">코멘트를 남기면 주인에게 전달돼요. 보낸 글은 고치거나 지울 수 있어요.</p>${(G.fb||[]).map(f=>`<div class="item"><textarea rows="3" data-fb="${f.id}">${esc(f.text)}</textarea><div class="ih" style="margin-top:6px"><button class="btn" data-sh="fbsave" data-id="${f.id}">수정 저장</button><button class="x" data-sh="fbdel" data-id="${f.id}">삭제</button></div></div>`).join('')}${L('새 피드백','<textarea id="fbn" rows="4" placeholder="코멘트, 고칠 점, 칭찬 등"></textarea>')}<button class="btn" data-sh="fbadd" style="width:100%">피드백 보내기</button><p class="sub">${esc(G.msg)}</p><button class="x" data-sh="gout">나가기</button></div>`;
+async function loadFb(){try{G.fb=(await API('fb-list',{},G.tok)).items}catch(e){G.fb=[]}}
+async function guestAct(a,id){G.msg='';try{
+if(a=='enter'){const c=$('#gc').value.trim();if(!c)return;const r=await API('redeem',{code:c});G.snap=r.snapshot;G.tok=r.token;try{sessionStorage.setItem('gs',JSON.stringify({s:r.snapshot,t:r.token}))}catch(e){}await loadFb()}
+if(a=='me'){try{localStorage.setItem('me','1')}catch(e){}location.reload();return}
+if(a=='gout'){try{sessionStorage.removeItem('gs')}catch(e){}G.snap=null;G.tok=null;G.fb=[]}
+if(a=='fbadd'){const t=$('#fbn').value.trim();if(t){await API('fb-save',{text:t},G.tok);await loadFb()}}
+if(a=='fbsave'){await API('fb-save',{id,text:document.querySelector('[data-fb="'+id+'"]').value},G.tok);G.msg='저장했어요.';await loadFb()}
+if(a=='fbdel'){await API('fb-del',{id},G.tok);await loadFb()}
+}catch(e){G.msg=e.message;if(/로그인|만료/.test(e.message))G.snap=null}
+render()}
+applyTheme();
+if(/[?&]me/.test(location.search)){try{localStorage.setItem('me','1')}catch(e){}}
+let isMe=false;try{isMe=localStorage.getItem('me')=='1'}catch(e){}
+if(!isMe){GM=true;try{const s=JSON.parse(sessionStorage.getItem('gs')||'null');if(s){G.snap=s.s;G.tok=s.t;loadFb().then(render)}}catch(e){}}
+render();
+if('serviceWorker' in navigator&&!window.Capacitor&&/^https?:/.test(location.protocol))navigator.serviceWorker.register('/sw.js').catch(()=>{});
+</script>
+</body>
+</html>
